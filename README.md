@@ -1,4 +1,4 @@
-# 🍽️ MessMate — Hostel Mess Menu & Feedback Management System
+ 🍽️ MessMate — Hostel Mess Menu & Feedback Management System
 
 A full-stack web application that turns subjective student opinions about hostel mess food into structured, actionable data for mess administrators.
 
