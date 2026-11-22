@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* Design tokens — Tailwind v4 theme variables */
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", "Plus Jakarta Sans", sans-serif;
+
+  --color-primary: #D85A30;
+  --color-primary-hover: #B83D15;
+  --color-primary-50: #FFF4F0;
+  --color-primary-100: #FFE4D9;
+  --color-primary-500: #D85A30;
+  --color-primary-600: #C2431A;
+
+  --color-secondary: #0F6E56;
+  --color-secondary-hover: #085A45;
+  --color-secondary-50: #EBF8F4;
+  --color-secondary-100: #C7EFE3;
+
+  --color-surface-page: #F8F7F4;
+  --color-surface-card: #FFFFFF;
+  --color-surface-muted: #F1EFEA;
+  --color-surface-dark: #161513;
+
+  --color-border: #E2DFD7;
+  --color-border-light: #F0EDE5;
+
+  --color-ink-primary: #1C1B19;
+  --color-ink-secondary: #5C5A54;
+  --color-ink-muted: #8E8B82;
+
+  --color-success: #15803D;
+  --color-success-bg: #DCFCE7;
+  --color-warning: #B45309;
+  --color-warning-bg: #FEF3C7;
+  --color-danger: #B91C1C;
+  --color-danger-bg: #FEE2E2;
+  --color-info: #1D4ED8;
+  --color-info-bg: #DBEAFE;
+
+  --radius-card: 16px;
+  --radius-sm: 8px;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  body {
+    @apply bg-surface-page text-ink-primary antialiased font-sans min-h-screen selection:bg-primary-100 selection:text-primary-600;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(216, 90, 48, 0.05) 0px, transparent 40%),
+      radial-gradient(at 100% 0%, rgba(15, 110, 86, 0.06) 0px, transparent 40%);
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-primary text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-primary-hover active:scale-[0.97] transition-all duration-200 shadow-sm shadow-primary-500/25 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary disabled:active:scale-100;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-secondary/30 bg-white text-secondary text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-secondary-50 hover:border-secondary active:scale-[0.97] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 border border-border bg-white text-ink-primary text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-surface-muted hover:border-ink-muted active:scale-[0.97] transition-all duration-200 cursor-pointer disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 bg-danger text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-red-800 active:scale-[0.97] transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50;
+  }
+  .card {
+    @apply bg-white/95 backdrop-blur-md border border-border/80 rounded-[16px] p-5 shadow-xs hover:shadow-md hover:border-border transition-all duration-200;
+  }
+  .card-glow {
+    @apply bg-gradient-to-br from-white via-white to-orange-50/40 border border-primary/25 rounded-[16px] p-5 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border shadow-xs transition-colors;
+  }
+  .badge-veg {
+    @apply bg-emerald-50 text-emerald-800 border-emerald-200/90;
+  }
+  .badge-nonveg {
+    @apply bg-rose-50 text-rose-800 border-rose-200/90;
+  }
+  .badge-special {
+    @apply bg-amber-50 text-amber-800 border-amber-300/90;
+  }
+  .badge-jain {
+    @apply bg-purple-50 text-purple-800 border-purple-200/90;
+  }
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-in-out forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D3D1C7;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A3A199;
+}
