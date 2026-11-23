@@ -57,9 +57,23 @@ export const submitFeedback = async (req, res) => {
         });
       }
 
+      let validUserId = null;
+      if (userId) {
+        try {
+          const { data: userRow } = await supabase
+            .from("users")
+            .select("id")
+            .eq("id", userId)
+            .maybeSingle();
+          if (userRow) validUserId = userRow.id;
+        } catch {
+          validUserId = null;
+        }
+      }
+
       const feedbackRecord = {
         id: `fb_${Date.now()}`,
-        user_id: userId,
+        user_id: validUserId,
         user_name: userName,
         food_name: foodName,
         meal_type: mealType || "General",
@@ -75,7 +89,12 @@ export const submitFeedback = async (req, res) => {
         .select()
         .single();
 
-      if (!error && created) {
+      if (error) {
+        console.error("[Supabase] Failed to insert feedback into Supabase:", error.message);
+        if (error.code === "PGRST205") {
+          console.warn("[Supabase] Missing table: 'public.feedbacks' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
+        }
+      } else if (created) {
         return res.status(201).json({
           success: true,
           message: "Feedback submitted successfully to Supabase!",

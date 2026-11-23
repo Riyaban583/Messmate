@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- 1. USERS TABLE
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.users (
-    id TEXT PRIMARY KEY DEFAULT ('usr_' || gen_random_uuid()),
+    id TEXT PRIMARY KEY DEFAULT ('usr_' || gen_random_uuid()::text),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- 2. MENUS TABLE (Weekly Mess Menu)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.menus (
-    id TEXT PRIMARY KEY DEFAULT ('menu_' || gen_random_uuid()),
+    id TEXT PRIMARY KEY DEFAULT ('menu_' || gen_random_uuid()::text),
     day VARCHAR(20) UNIQUE NOT NULL CHECK (day IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')),
     date DATE,
     meals JSONB NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.menus (
 -- 3. FEEDBACKS TABLE (Daily Meal Ratings)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.feedbacks (
-    id TEXT PRIMARY KEY DEFAULT ('fb_' || gen_random_uuid()),
+    id TEXT PRIMARY KEY DEFAULT ('fb_' || gen_random_uuid()::text),
     user_id TEXT REFERENCES public.users(id) ON DELETE SET NULL,
     user_name VARCHAR(255) DEFAULT 'Student',
     food_name VARCHAR(255) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS public.feedbacks (
 -- 4. COMPLAINTS TABLE (Support & Issue Tickets)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.complaints (
-    id TEXT PRIMARY KEY DEFAULT ('cmp_' || floor(extract(epoch from now()))),
+    id TEXT PRIMARY KEY DEFAULT ('cmp_' || floor(extract(epoch from now()))::text),
     user_id TEXT REFERENCES public.users(id) ON DELETE SET NULL,
     student_name VARCHAR(255) NOT NULL,
     student_email VARCHAR(255) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS public.complaints (
 -- 5. SUGGESTIONS TABLE (Community Dish Suggestions & Upvotes)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.suggestions (
-    id TEXT PRIMARY KEY DEFAULT ('sug_' || gen_random_uuid()),
+    id TEXT PRIMARY KEY DEFAULT ('sug_' || gen_random_uuid()::text),
     user_id TEXT REFERENCES public.users(id) ON DELETE SET NULL,
     submitted_by VARCHAR(255) NOT NULL,
     title VARCHAR(255) NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS public.suggestions (
 -- 6. FOOD_ITEMS TABLE (Food Catalog)
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.food_items (
-    id TEXT PRIMARY KEY DEFAULT ('food_' || gen_random_uuid()),
+    id TEXT PRIMARY KEY DEFAULT ('food_' || gen_random_uuid()::text),
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
     dietary VARCHAR(50) DEFAULT 'Veg',
@@ -123,16 +123,27 @@ ALTER TABLE public.suggestions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.food_items ENABLE ROW LEVEL SECURITY;
 
 -- Permissive public policies for API backend access
+DROP POLICY IF EXISTS "Public Read Access Menus" ON public.menus;
+DROP POLICY IF EXISTS "Public All Access Menus" ON public.menus;
 CREATE POLICY "Public Read Access Menus" ON public.menus FOR SELECT USING (true);
-CREATE POLICY "Public All Access Menus" ON public.menus FOR ALL USING (true);
+CREATE POLICY "Public All Access Menus" ON public.menus FOR ALL USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public Read Access Users" ON public.users;
+DROP POLICY IF EXISTS "Public All Access Users" ON public.users;
 CREATE POLICY "Public Read Access Users" ON public.users FOR SELECT USING (true);
-CREATE POLICY "Public All Access Users" ON public.users FOR ALL USING (true);
+CREATE POLICY "Public All Access Users" ON public.users FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Public All Access Feedbacks" ON public.feedbacks FOR ALL USING (true);
-CREATE POLICY "Public All Access Complaints" ON public.complaints FOR ALL USING (true);
-CREATE POLICY "Public All Access Suggestions" ON public.suggestions FOR ALL USING (true);
-CREATE POLICY "Public All Access Food Items" ON public.food_items FOR ALL USING (true);
+DROP POLICY IF EXISTS "Public All Access Feedbacks" ON public.feedbacks;
+CREATE POLICY "Public All Access Feedbacks" ON public.feedbacks FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public All Access Complaints" ON public.complaints;
+CREATE POLICY "Public All Access Complaints" ON public.complaints FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public All Access Suggestions" ON public.suggestions;
+CREATE POLICY "Public All Access Suggestions" ON public.suggestions FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Public All Access Food Items" ON public.food_items;
+CREATE POLICY "Public All Access Food Items" ON public.food_items FOR ALL USING (true) WITH CHECK (true);
 
 
 -- --------------------------------------------------------------------

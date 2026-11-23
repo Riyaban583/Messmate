@@ -53,6 +53,14 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use("/api", apiLimiter);
 
 // Health check endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "MessMate API",
+    health: "/api/health",
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({ success: true, message: "MessMate API is healthy and operational", timestamp: new Date().toISOString() });
 });
