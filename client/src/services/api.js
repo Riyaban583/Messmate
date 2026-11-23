@@ -1,7 +1,13 @@
 import axios from "axios";
 
+const baseURL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? "https://messmate-1-b4ra.onrender.com/api"
+    : "http://localhost:5000/api");
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL,
 });
 
 // Attach the JWT (if present) to every outgoing request.

@@ -10,6 +10,10 @@ cp .env.example .env    # set VITE_API_BASE_URL to your running backend
 npm run dev
 ```
 
+## Deploy
+
+The production build uses the deployed Render API by default. In Vercel, set `VITE_API_BASE_URL` to `https://messmate-1-b4ra.onrender.com/api` if you want to configure it explicitly; this variable overrides the default.
+
 ## Current state
 
 The backend (`../server`) hasn't been built yet (see `../phases.md` — Phase 1 is next). Every page currently reads from `src/services/mockData.js` so the UI is fully clickable and reviewable on its own. Each place that will call the real API is marked with a `// TODO: replace with ...Api.method(...)` comment pointing at the matching function already defined in `src/services/api.js`.
