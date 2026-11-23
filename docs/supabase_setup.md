@@ -21,7 +21,7 @@ This guide provides step-by-step instructions to create your Supabase database a
 
 1. In your Supabase Dashboard left sidebar, click on **SQL Editor** (the `>_` icon).
 2. Click **"New Query"**.
-3. Open the schema file from your project workspace: [`supabase/schema.sql`](file:///c:/Users/Shahanaj/Downloads/mess-menu-systemm/supabase/schema.sql).
+3. Open [`supabase/schema.sql`](../supabase/schema.sql) from your project workspace.
 4. Copy the entire contents of `supabase/schema.sql` and paste it into the Supabase SQL Editor.
 5. Click **"Run"** (or press `Ctrl + Enter` / `Cmd + Enter`).
 6. You should see a green success message: **`Success. No rows returned`**.

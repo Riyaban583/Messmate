@@ -111,6 +111,10 @@ export const submitComplaint = async (req, res) => {
         if (error.code === "PGRST205") {
           console.warn("[Supabase] Missing table: 'public.complaints' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
         }
+        return res.status(500).json({
+          success: false,
+          message: `Failed to save complaint to the database: ${error.message}`,
+        });
       } else if (created) {
         return res.status(201).json({
           success: true,
@@ -222,6 +226,14 @@ export const updateComplaintStatus = async (req, res) => {
         data: mapComplaintFromSupabase(updated),
       });
     }
+
+    console.error("[Supabase] Failed to update complaint:", error?.message || "Complaint not found.");
+    return res.status(error ? 500 : 404).json({
+      success: false,
+      message: error
+        ? `Failed to update complaint in the database: ${error.message}`
+        : "Complaint ticket not found.",
+    });
   }
 
   const complaint = complaintStore.find((c) => c.id === id);

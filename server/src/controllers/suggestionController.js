@@ -120,6 +120,10 @@ export const submitSuggestion = async (req, res) => {
       if (error.code === "PGRST205") {
         console.warn("[Supabase] Missing table: 'public.suggestions' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
       }
+      return res.status(500).json({
+        success: false,
+        message: `Failed to save suggestion to the database: ${error.message}`,
+      });
     } else if (created) {
       return res.status(201).json({
         success: true,
@@ -158,42 +162,60 @@ export const voteSuggestion = async (req, res) => {
   const userId = req.user ? (req.user.id || req.user._id) : `anon-${Date.now()}`;
 
   if (isSupabaseConfigured() && supabase) {
-    const { data: item } = await supabase
+    const { data: item, error: selectError } = await supabase
       .from("suggestions")
       .select("*")
       .eq("id", id)
       .maybeSingle();
 
-    if (item) {
-      let upvoteList = Array.isArray(item.upvotes) ? [...item.upvotes] : [];
-      const existingIdx = upvoteList.indexOf(userId);
-      let hasVoted = false;
-
-      if (existingIdx > -1) {
-        upvoteList.splice(existingIdx, 1);
-        hasVoted = false;
-      } else {
-        upvoteList.push(userId);
-        hasVoted = true;
-      }
-
-      const updatedCount = upvoteList.length;
-
-      const { data: updated, error } = await supabase
-        .from("suggestions")
-        .update({ upvotes: upvoteList, upvote_count: updatedCount })
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (!error && updated) {
-        return res.status(200).json({
-          success: true,
-          message: hasVoted ? "Upvote added in Supabase!" : "Upvote removed from Supabase.",
-          data: mapSuggestionFromSupabase(updated),
-        });
-      }
+    if (selectError) {
+      console.error("[Supabase] Failed to load suggestion for voting:", selectError.message);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to load suggestion from the database: ${selectError.message}`,
+      });
     }
+
+    if (!item) {
+      return res.status(404).json({ success: false, message: "Suggestion not found." });
+    }
+
+    let upvoteList = Array.isArray(item.upvotes) ? [...item.upvotes] : [];
+    const existingIdx = upvoteList.indexOf(userId);
+    let hasVoted = false;
+
+    if (existingIdx > -1) {
+      upvoteList.splice(existingIdx, 1);
+      hasVoted = false;
+    } else {
+      upvoteList.push(userId);
+      hasVoted = true;
+    }
+
+    const updatedCount = upvoteList.length;
+
+    const { data: updated, error } = await supabase
+      .from("suggestions")
+      .update({ upvotes: upvoteList, upvote_count: updatedCount })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (!error && updated) {
+      return res.status(200).json({
+        success: true,
+        message: hasVoted ? "Upvote added in Supabase!" : "Upvote removed from Supabase.",
+        data: mapSuggestionFromSupabase(updated),
+      });
+    }
+
+    console.error("[Supabase] Failed to update suggestion vote:", error?.message || "Suggestion not found.");
+    return res.status(error ? 500 : 404).json({
+      success: false,
+      message: error
+        ? `Failed to save suggestion vote to the database: ${error.message}`
+        : "Suggestion not found.",
+    });
   }
 
   const item = suggestionStore.find((s) => s.id === id);
@@ -244,6 +266,14 @@ export const updateSuggestionStatus = async (req, res) => {
         data: mapSuggestionFromSupabase(updated),
       });
     }
+
+    console.error("[Supabase] Failed to update suggestion:", error?.message || "Suggestion not found.");
+    return res.status(error ? 500 : 404).json({
+      success: false,
+      message: error
+        ? `Failed to update suggestion in the database: ${error.message}`
+        : "Suggestion not found.",
+    });
   }
 
   const item = suggestionStore.find((s) => s.id === id);
