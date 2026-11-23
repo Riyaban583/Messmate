@@ -113,7 +113,9 @@ CREATE INDEX IF NOT EXISTS idx_suggestions_status ON public.suggestions(status);
 CREATE INDEX IF NOT EXISTS idx_suggestions_upvotes ON public.suggestions(upvote_count DESC);
 
 -- --------------------------------------------------------------------
--- ROW LEVEL SECURITY (RLS) POLICIES
+-- ROW LEVEL SECURITY
+-- The backend uses a server-only Supabase secret/service-role key, which
+-- bypasses RLS. Do not grant public access to these tables.
 -- --------------------------------------------------------------------
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.menus ENABLE ROW LEVEL SECURITY;
@@ -122,6 +124,16 @@ ALTER TABLE public.complaints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.suggestions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.food_items ENABLE ROW LEVEL SECURITY;
 
+<<<<<<< HEAD
+DROP POLICY IF EXISTS "Public Read Access Menus" ON public.menus;
+DROP POLICY IF EXISTS "Public All Access Menus" ON public.menus;
+DROP POLICY IF EXISTS "Public Read Access Users" ON public.users;
+DROP POLICY IF EXISTS "Public All Access Users" ON public.users;
+DROP POLICY IF EXISTS "Public All Access Feedbacks" ON public.feedbacks;
+DROP POLICY IF EXISTS "Public All Access Complaints" ON public.complaints;
+DROP POLICY IF EXISTS "Public All Access Suggestions" ON public.suggestions;
+DROP POLICY IF EXISTS "Public All Access Food Items" ON public.food_items;
+=======
 -- Permissive public policies for API backend access
 DROP POLICY IF EXISTS "Public Read Access Menus" ON public.menus;
 DROP POLICY IF EXISTS "Public All Access Menus" ON public.menus;
@@ -144,6 +156,7 @@ CREATE POLICY "Public All Access Suggestions" ON public.suggestions FOR ALL USIN
 
 DROP POLICY IF EXISTS "Public All Access Food Items" ON public.food_items;
 CREATE POLICY "Public All Access Food Items" ON public.food_items FOR ALL USING (true) WITH CHECK (true);
+>>>>>>> 91db31dae331b94eb3a02907b28ba9cc99bc7ac2
 
 
 -- --------------------------------------------------------------------
