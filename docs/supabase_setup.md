@@ -49,7 +49,7 @@ This guide provides step-by-step instructions to create your Supabase database a
 
 ## Step 4: Configure Your Backend Environment Variables
 
-1. Open the file [`server/.env`](file:///c:/Users/Shahanaj/Downloads/mess-menu-systemm/server/.env) in your editor.
+1. Copy `server/.env.example` to `server/.env` and open the new file in your editor.
 2. Paste your Supabase credentials:
 
 ```env
@@ -59,13 +59,14 @@ JWT_SECRET=messmate_super_secret_jwt_key_change_in_production
 CLIENT_URL=http://localhost:5173
 NODE_ENV=development
 
-# Supabase Credentials
+# Supabase credentials (Project Settings -> API Keys)
 SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_ANON_KEY=your_actual_anon_key_here
-SUPABASE_SERVICE_ROLE_KEY=your_actual_service_role_key_here
+SUPABASE_PUBLISHABLE_KEY=your_publishable_key
+SUPABASE_SECRET_KEY=your_secret_key
 ```
 
-3. Save the file.
+Use the secret key for server-side database access; keep it private and never commit `.env`.
+Save the file.
 
 ---
 
@@ -78,9 +79,10 @@ SUPABASE_SERVICE_ROLE_KEY=your_actual_service_role_key_here
    npm run dev
    ```
 
-2. Watch the console output. When Supabase is attached, you will see:
+2. Watch the console output. When Supabase is attached and the `menus` table is reachable, you will see:
    ```text
    [Supabase] Client initialized successfully for https://your-project-ref.supabase.co
+   [Supabase] Database connection verified.
    [MessMate Server] Listening on http://localhost:5000
    ```
 
