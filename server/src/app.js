@@ -25,15 +25,22 @@ app.use(
 );
 
 // CORS configuration
-const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"];
+const allowedOrigins = (
+  process.env.CLIENT_URL ||
+  "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
-      } else {
-        callback(null, true); // Permissive for local dev
+        return;
       }
+
+      callback(new Error("Origin is not allowed by CORS"));
     },
     credentials: true,
   })

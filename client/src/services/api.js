@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL =
   import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD
+  (import.meta.env.MODE === "production"
     ? "https://messmate-1-b4ra.onrender.com/api"
     : "http://localhost:5000/api");
 
