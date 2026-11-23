@@ -86,24 +86,23 @@ export const register = async (req, res, next) => {
         .single();
 
       if (insertErr) {
-        console.error("Supabase user creation error:", insertErr);
-        throw new Error(insertErr.message);
+        console.warn("[Supabase] User registration fallback (table error):", insertErr.message);
+      } else if (createdUser) {
+        const token = generateToken(createdUser);
+
+        return res.status(201).json({
+          success: true,
+          message: "Account registered successfully in Supabase DB!",
+          token,
+          user: {
+            id: createdUser.id,
+            name: createdUser.name,
+            email: createdUser.email,
+            role: createdUser.role,
+            roomNumber: createdUser.room_number,
+          },
+        });
       }
-
-      const token = generateToken(createdUser);
-
-      return res.status(201).json({
-        success: true,
-        message: "Account registered successfully in Supabase DB!",
-        token,
-        user: {
-          id: createdUser.id,
-          name: createdUser.name,
-          email: createdUser.email,
-          role: createdUser.role,
-          roomNumber: createdUser.room_number,
-        },
-      });
     }
 
     // Fallback store handling

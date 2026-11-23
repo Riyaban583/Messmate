@@ -68,9 +68,24 @@ export const submitComplaint = async (req, res) => {
 
     if (isSupabaseConfigured() && supabase) {
       const ticketId = `cmp_${Math.floor(Date.now() / 1000)}`;
+
+      let validUserId = null;
+      if (userId) {
+        try {
+          const { data: userRow } = await supabase
+            .from("users")
+            .select("id")
+            .eq("id", userId)
+            .maybeSingle();
+          if (userRow) validUserId = userRow.id;
+        } catch {
+          validUserId = null;
+        }
+      }
+
       const newRecord = {
         id: ticketId,
-        user_id: userId,
+        user_id: validUserId,
         student_name: studentName,
         student_email: studentEmail,
         room_number: roomNumber,
@@ -91,7 +106,12 @@ export const submitComplaint = async (req, res) => {
         .select()
         .single();
 
-      if (!error && created) {
+      if (error) {
+        console.error("[Supabase] Failed to insert complaint into Supabase:", error.message);
+        if (error.code === "PGRST205") {
+          console.warn("[Supabase] Missing table: 'public.complaints' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
+        }
+      } else if (created) {
         return res.status(201).json({
           success: true,
           message: "Complaint registered successfully in Supabase. Ticket ID generated.",

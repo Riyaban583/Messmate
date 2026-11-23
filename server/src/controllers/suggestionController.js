@@ -78,16 +78,32 @@ export const submitSuggestion = async (req, res) => {
 
   if (isSupabaseConfigured() && supabase) {
     const sugId = `sug_${Date.now()}`;
+
+    // Verify if userId exists in users table to prevent foreign key violation
+    let validUserId = null;
+    if (userId) {
+      try {
+        const { data: userRow } = await supabase
+          .from("users")
+          .select("id")
+          .eq("id", userId)
+          .maybeSingle();
+        if (userRow) validUserId = userRow.id;
+      } catch {
+        validUserId = null;
+      }
+    }
+
     const newRecord = {
       id: sugId,
-      user_id: userId,
+      user_id: validUserId,
       submitted_by: submittedBy,
       title: title.trim(),
       description: description.trim(),
       category,
       dietary: dietary || "Veg",
       status: "Under Review",
-      upvotes: [userId],
+      upvotes: userId ? [userId] : [],
       upvote_count: 1,
       admin_comment: "",
       created_at: new Date().toISOString(),
@@ -99,7 +115,12 @@ export const submitSuggestion = async (req, res) => {
       .select()
       .single();
 
-    if (!error && created) {
+    if (error) {
+      console.error("[Supabase] Failed to insert suggestion into Supabase:", error.message);
+      if (error.code === "PGRST205") {
+        console.warn("[Supabase] Missing table: 'public.suggestions' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
+      }
+    } else if (created) {
       return res.status(201).json({
         success: true,
         message: "Food suggestion submitted for community voting in Supabase!",
