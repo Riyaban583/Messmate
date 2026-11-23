@@ -94,6 +94,10 @@ export const submitFeedback = async (req, res) => {
         if (error.code === "PGRST205") {
           console.warn("[Supabase] Missing table: 'public.feedbacks' does not exist yet. Run 'supabase/schema.sql' in your Supabase SQL editor.");
         }
+        return res.status(500).json({
+          success: false,
+          message: `Failed to save feedback to the database: ${error.message}`,
+        });
       } else if (created) {
         return res.status(201).json({
           success: true,

@@ -124,7 +124,6 @@ ALTER TABLE public.complaints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.suggestions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.food_items ENABLE ROW LEVEL SECURITY;
 
-<<<<<<< HEAD
 DROP POLICY IF EXISTS "Public Read Access Menus" ON public.menus;
 DROP POLICY IF EXISTS "Public All Access Menus" ON public.menus;
 DROP POLICY IF EXISTS "Public Read Access Users" ON public.users;
@@ -133,31 +132,6 @@ DROP POLICY IF EXISTS "Public All Access Feedbacks" ON public.feedbacks;
 DROP POLICY IF EXISTS "Public All Access Complaints" ON public.complaints;
 DROP POLICY IF EXISTS "Public All Access Suggestions" ON public.suggestions;
 DROP POLICY IF EXISTS "Public All Access Food Items" ON public.food_items;
-=======
--- Permissive public policies for API backend access
-DROP POLICY IF EXISTS "Public Read Access Menus" ON public.menus;
-DROP POLICY IF EXISTS "Public All Access Menus" ON public.menus;
-CREATE POLICY "Public Read Access Menus" ON public.menus FOR SELECT USING (true);
-CREATE POLICY "Public All Access Menus" ON public.menus FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public Read Access Users" ON public.users;
-DROP POLICY IF EXISTS "Public All Access Users" ON public.users;
-CREATE POLICY "Public Read Access Users" ON public.users FOR SELECT USING (true);
-CREATE POLICY "Public All Access Users" ON public.users FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public All Access Feedbacks" ON public.feedbacks;
-CREATE POLICY "Public All Access Feedbacks" ON public.feedbacks FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public All Access Complaints" ON public.complaints;
-CREATE POLICY "Public All Access Complaints" ON public.complaints FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public All Access Suggestions" ON public.suggestions;
-CREATE POLICY "Public All Access Suggestions" ON public.suggestions FOR ALL USING (true) WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Public All Access Food Items" ON public.food_items;
-CREATE POLICY "Public All Access Food Items" ON public.food_items FOR ALL USING (true) WITH CHECK (true);
->>>>>>> 91db31dae331b94eb3a02907b28ba9cc99bc7ac2
-
 
 -- --------------------------------------------------------------------
 -- SEED DATA SETUP

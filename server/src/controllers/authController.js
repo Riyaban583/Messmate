@@ -86,7 +86,11 @@ export const register = async (req, res, next) => {
         .single();
 
       if (insertErr) {
-        console.warn("[Supabase] User registration fallback (table error):", insertErr.message);
+        console.error("[Supabase] Failed to insert user:", insertErr.message);
+        return res.status(500).json({
+          success: false,
+          message: `Failed to save account to the database: ${insertErr.message}`,
+        });
       } else if (createdUser) {
         const token = generateToken(createdUser);
 

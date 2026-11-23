@@ -182,6 +182,12 @@ export const updateMenu = async (req, res) => {
         data: { day: data.day, date: data.date, meals: data.meals },
       });
     }
+
+    console.error("[Supabase] Failed to update menu:", error?.message || "No menu row returned.");
+    return res.status(500).json({
+      success: false,
+      message: `Failed to save menu to the database: ${error?.message || "No menu row returned."}`,
+    });
   }
 
   // Fallback update
